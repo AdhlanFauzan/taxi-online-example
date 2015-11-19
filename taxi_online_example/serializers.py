@@ -1,5 +1,7 @@
+import datetime
 from rest_framework import serializers
 from taxi_online_example.models import TaxiLocation, PassengerOrder
+from taxi_online_example.utils import UnixEpochDateField
 
 
 class TaxiLocationSerializer(serializers.ModelSerializer):
@@ -18,6 +20,8 @@ class TaxiLocationSerializer(serializers.ModelSerializer):
 
 
 class PassengerOrderSerializer(serializers.ModelSerializer):
+    time_to_pick_up = UnixEpochDateField(required=False, default=datetime.datetime.now)
+
     class Meta:
         model = PassengerOrder
         fields = ('passenger_id', 'lon', 'lat', 'time_to_pick_up')

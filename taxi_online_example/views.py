@@ -2,30 +2,36 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from taxi_online_example.models import Taxi, Passenger
-from taxi_online_example.serializers import TaxiSerializer, PassengerSerializer
+from taxi_online_example.models import TaxiLocation, PassengerOrder
+from taxi_online_example.serializers import TaxiLocationSerializer, PassengerOrderSerializer
 
 
-class TaxiDetail(APIView):
+class TaxiLocationAPI(APIView):
+    """
+    API for the taxi drivers: for sending to server information about current location and availability to pick up some passengers
+    """
 
     def get_object(self, pk):
         try:
-            return Taxi.objects.get(key=pk)
-        except Taxi.DoesNotExist:
+            return TaxiLocation.objects.get(taxi_id=pk)
+        except TaxiLocation.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, format=None):
         taxi = self.get_object(pk)
-        serializer = TaxiSerializer(taxi)
+        serializer = TaxiLocationSerializer(taxi)
         return Response(serializer.data)
 
     def post(self, request, pk, format=None):
+        data = request.data.dict()
+        data['taxi_id'] = pk
+
         try:
             taxi = self.get_object(pk)
-            serializer = TaxiSerializer(taxi, data=request.data)
+            serializer = TaxiLocationSerializer(taxi, data=data)
             st = status.HTTP_201_CREATED
         except Http404:
-            serializer = TaxiSerializer(data=request.data)
+            serializer = TaxiLocationSerializer(data=data)
             serializer.key = pk
             st = status.HTTP_200_OK
 
@@ -35,31 +41,37 @@ class TaxiDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        snippet.delete()
+        taxi = self.get_object(pk)
+        taxi.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PassengerDetail(APIView):
+class PassengerOrderAPI(APIView):
+    """
+    API for the passengers: for calling a taxi or to cancel their orders
+    """
 
     def get_object(self, pk):
         try:
-            return Passenger.objects.get(key=pk)
-        except Passenger.DoesNotExist:
+            return PassengerOrder.objects.get(passenger_id=pk)
+        except PassengerOrder.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, format=None):
-        taxi = self.get_object(pk)
-        serializer = PassengerSerializer(taxi)
+        passenger = self.get_object(pk)
+        serializer = PassengerOrderSerializer(passenger)
         return Response(serializer.data)
 
     def post(self, request, pk, format=None):
+        data = request.data.dict()
+        data['passenger_id'] = pk
+
         try:
-            taxi = self.get_object(pk)
-            serializer = PassengerSerializer(taxi, data=request.data)
+            passenger = self.get_object(pk)
+            serializer = PassengerOrderSerializer(passenger, data=data)
             st = status.HTTP_201_CREATED
         except Http404:
-            serializer = PassengerSerializer(data=request.data)
+            serializer = PassengerOrderSerializer(data=data)
             serializer.key = pk
             st = status.HTTP_200_OK
 
@@ -69,7 +81,7 @@ class PassengerDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        snippet.delete()
+        passenger = self.get_object(pk)
+        passenger.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

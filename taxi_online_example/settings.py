@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+DATETIME_FORMAT = "U"
+DATETIME_INPUT_FORMATS = ("%s",)
+
 
 # Application definition
 
@@ -37,7 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'taxi_online_example'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -79,11 +83,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'taxi_online_example',
-        'USER': 'root',
-        'PASSWORD': 'password',
+        'USER': 'taxi',
+        'PASSWORD': 'taxi',
         'HOST': 'localhost',
         'PORT': '',
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny'
+    ]
 }
 
 

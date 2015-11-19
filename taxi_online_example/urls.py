@@ -20,9 +20,8 @@ from taxi_online_example import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    url(r'^taxi/(?P<pk>[0-9]+)/ready/$', views.TaxiDetail.as_view()),
-    url(r'^passenger/(?P<pk>[0-9]+)/order/$', views.PassengerDetail.as_view()),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^taxi/(?P<pk>[0-9]+)/location/$', views.TaxiLocationAPI.as_view()),
+    url(r'^passenger/(?P<pk>[0-9]+)/order/$', views.PassengerOrderAPI.as_view()),
     url(r'^admin/', include(admin.site.urls)),
 ]
 
