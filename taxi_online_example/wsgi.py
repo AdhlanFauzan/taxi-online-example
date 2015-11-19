@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 WSGI config for taxi_online_example project.
 

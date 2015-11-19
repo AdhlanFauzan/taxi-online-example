@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import time
 import datetime
 from rest_framework import serializers
+from django.core.exceptions import ValidationError
 
 
 class UTC(datetime.tzinfo):
@@ -25,4 +28,17 @@ class UnixEpochDateField(serializers.DateTimeField):
             return None
 
     def to_internal_value(self, value):
-        return datetime.datetime.fromtimestamp(int(value), tz=UTC())
+        try:
+            return datetime.datetime.fromtimestamp(int(value), tz=UTC())
+        except ValueError:
+            return value
+
+
+def date_now_or_future_validator(value):
+    try:
+        int(value)
+    except ValueError:
+        raise ValidationError('Incorrect format of date. It should be a unixtimestamp')
+
+    if value < datetime.datetime.now(tz=UTC()):
+        raise ValidationError('Date and time shouldn\'t be less then the current')

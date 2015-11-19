@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """taxi_online_example URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -20,8 +22,9 @@ from taxi_online_example import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    url(r'^taxi/(?P<pk>[0-9]+)/location/$', views.TaxiLocationAPI.as_view()),
-    url(r'^passenger/(?P<pk>[0-9]+)/order/$', views.PassengerOrderAPI.as_view()),
+    url(r'^$', views.index, name='index'),
+    url(r'^taxi/(?P<pk>[0-9]+)/location/$', views.TaxiLocationAPI.as_view(), name='taxi-location-api'),
+    url(r'^passenger/(?P<pk>[0-9]+)/order/$', views.PassengerOrderAPI.as_view(), name='passenger-order-api'),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <meta name="robots" content="NONE,NOARCHIVE" />
+      <title>Taxi-online example</title>
+      <script type="text/javascript">
+        function go(url)
+        {
+            var user_id = document.getElementById("user_id").value;
+            if (user_id) {
+                url = url.replace('0', user_id);
+            }
+            window.location.href = url;
+        }
+      </script>
+</head>
+
+<body>
+    <div>Hello! Please, enter your taxi driver id or passenger id:
+        <input type="text" name="user_id" id="user_id" value="" size="4">
+    </div>
+    <br />
+    <div>and after this follow the underlying links:</div>
+    <ul>
+        <li><a href="#" onclick="go('{% url 'taxi-location-api' 0 %}');return false">to operate with API as a taxi driver</a></li>
+        <li><a href="#" onclick="go('{% url 'passenger-order-api' 0 %}');return false">to operate with API as a passenger</a></li>
+    </ul>
+</body>
+
+</html>
