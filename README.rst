@@ -35,10 +35,10 @@ Also you need to create empty database and user for the project:
 
 .. code-block:: sql
 
-  CREATE DATABASE test_taxi_online_example;
+  CREATE DATABASE taxi_online_example;
   CREATE USER taxi WITH password 'taxi';
   ALTER USER taxi CREATEDB;
-  GRANT ALL privileges ON DATABASE test_taxi_online_example TO taxi;
+  GRANT ALL privileges ON DATABASE taxi_online_example TO taxi;
 
 After DB preparation will be finished you need to create empty DB structure:
 
