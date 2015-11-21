@@ -14,10 +14,14 @@ The recommended way of deploying the current project is to use virtualenv:
 
 .. code-block:: bash
 
+  git clone git@github.com:StraNNiKK/taxi-online-example.git
+  cd taxi-online-example
   mkdir venv && echo "Virtualenv directory" > venv/README
   virtualenv --no-site-packages --prompt="(taxi_online_example)" venv
   source venv/bin/activate
   pip install -r requirements.txt
+
+You may need to install an additional package (in Ubuntu/Debian systems it named *libpq-dev*) for the *psycopg2* python package in case of an error on *pip install* step.
 
 After you have created virtualenv directory you should create *settings.py* file to implement your own enviroment settings (at least you should change settings for connection to PostgreSQL):
 
