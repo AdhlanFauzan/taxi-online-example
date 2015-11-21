@@ -23,8 +23,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^taxi/(?P<pk>[0-9]+)/location/$', views.TaxiLocationAPI.as_view(), name='taxi-location-api'),
-    url(r'^passenger/(?P<pk>[0-9]+)/order/$', views.PassengerOrderAPI.as_view(), name='passenger-order-api'),
+    url(r'^taxi/(?P<pk>[0-9a-zA-Z_]+)/location/$', views.TaxiLocationAPI.as_view(), name='taxi-location-api'),
+    url(r'^passenger/(?P<pk>[0-9a-zA-Z_]+)/order/$', views.PassengerOrderAPI.as_view(), name='passenger-order-api'),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

@@ -14,9 +14,13 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+import logging.config
+
+
+TESTING = sys.argv[1:2] == ['test']
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -98,6 +102,60 @@ REST_FRAMEWORK = {
     ]
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '[%(levelname)s][%(asctime)s][%(module)s][%(message)s]'
+        },
+        'simple': {
+            'format': '[%(levelname)s][%(identifier)s][%(message)s]'
+        },
+    },
+    'handlers': {
+        'console': {
+            'formatter': 'simple',
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
+        'django_requests': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/'.join([BASE_DIR , 'logs', 'django.requests.log'])
+        },
+        'django_api_requests': {
+            'formatter': 'verbose',
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': '/'.join([BASE_DIR , 'logs', 'django.api.requests.log'])
+        },
+        'processing': {
+            'formatter': 'simple',
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': '/'.join([BASE_DIR , 'logs', 'processing.log'])
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['django_requests'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.api.request': {
+            'handlers': ['django_api_requests'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'processing': {
+            'handlers': ['processing', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    },
+}
+logging.config.dictConfig(LOGGING)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

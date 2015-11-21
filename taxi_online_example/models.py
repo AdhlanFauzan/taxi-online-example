@@ -3,7 +3,8 @@
 import datetime
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from taxi_online_example.utils import date_now_or_future_validator
+from taxi_online_example.utils import date_now_or_future_validator, UTC
+from django.forms.models import model_to_dict
 
 
 class TaxiLocation(models.Model):
@@ -19,6 +20,9 @@ class TaxiLocation(models.Model):
     def change_activity(self, is_busy):
         self.is_busy = is_busy
         self.save()
+
+    def description(self):
+        return '<TaxiLocation %s>' % _get_model_object_description(self)
 
 
 class PassengerOrder(models.Model):
@@ -40,12 +44,15 @@ class PassengerOrder(models.Model):
         self.taxi_id = None
         self.save()
 
-    def get_all_passengers_for_pick_up(self):
-        pass
+    @classmethod
+    def get_all_passengers_for_pick_up(cls):
+        return cls.objects.filter(time_to_pick_up__lte=datetime.datetime.now(tz=UTC()),
+                                  taxi_id__isnull=True).order_by('time_to_pick_up')
 
     def get_nearest_free_taxi(self, radius=10):
         # http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
-        sql = """SELECT tl.taxi_id,
+        sql = """SELECT tl.id,
+                        tl.taxi_id,
                         p.distance_unit
                                  * DEGREES(ACOS(COS(RADIANS(p.latpoint))
                                  * COS(RADIANS(tl.lat))
@@ -67,12 +74,19 @@ class PassengerOrder(models.Model):
                       BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                           AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   ORDER BY distance_in_km
-                  LIMIT 10""" % {'taxi_location_table_name': TaxiLocation._meta.db_table,
+                  LIMIT 1""" % {'taxi_location_table_name': TaxiLocation._meta.db_table,
                                  'latpoint': self.lat, 'longpoint': self.lon, 'radius': radius}
 
-        return TaxiLocation.objects.raw(sql)
+        for p in TaxiLocation.objects.raw(sql):
+            return p
+        return False
+
+    def description(self):
+        return '<PassengerOrder %s>' % _get_model_object_description(self)
 
 
+def _get_model_object_description(obj):
+    return ' '.join([('%s=%s' % (k, str(v))) for k, v in model_to_dict(obj).iteritems()])
 
 
 

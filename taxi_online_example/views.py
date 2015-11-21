@@ -7,6 +7,7 @@ from rest_framework.parsers import FormParser, JSONParser
 from rest_framework import status
 from taxi_online_example.models import TaxiLocation, PassengerOrder
 from taxi_online_example.serializers import TaxiLocationSerializer, PassengerOrderSerializer
+from taxi_online_example.utils import RequestLogViewMixin
 from django.template import loader
 from django.http import HttpResponse, QueryDict
 
@@ -16,7 +17,7 @@ def index(request):
     return HttpResponse(template.render({}))
 
 
-class TaxiLocationAPI(APIView):
+class TaxiLocationAPI(RequestLogViewMixin, APIView):
     """
     API for the taxi drivers: for sending to server information about current location and availability to pick up some passengers
     """
@@ -57,19 +58,19 @@ class TaxiLocationAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        taxi = self.get_object(pk)
+        t = self.get_object(pk)
 
         try:
-            order = PassengerOrder.objects.get(taxi_id=taxi.id)
+            order = PassengerOrder.objects.get(taxi_id=t.taxi_id)
             order.remove_taxi()
         except PassengerOrder.DoesNotExist:
             pass
 
-        taxi.delete()
+        t.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PassengerOrderAPI(APIView):
+class PassengerOrderAPI(RequestLogViewMixin, APIView):
     """
     API for the passengers: for calling a taxi or to cancel their orders
     """
@@ -122,7 +123,7 @@ class PassengerOrderAPI(APIView):
     def delete(self, request, pk, format=None):
         order = self.get_object(pk)
 
-        taxi = TaxiLocation.get_object(order.taxi_id, rise_exception=False)
+        taxi = TaxiLocationAPI.get_object(order.taxi_id, rise_exception=False)
         if taxi:
             taxi.change_activity(is_busy=False)
 

@@ -4,6 +4,8 @@ import time
 import datetime
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
+from django.utils.decorators import decorator_from_middleware
+from taxi_online_example.middleware import RequestLogMiddleware
 
 
 class UTC(datetime.tzinfo):
@@ -34,11 +36,24 @@ class UnixEpochDateField(serializers.DateTimeField):
             return value
 
 
+class RequestLogViewMixin(object):
+    """
+    Adds RequestLogMiddleware to any Django View by overriding as_view.
+    """
+
+    @classmethod
+    def as_view(cls, *args, **kwargs):
+        view = super(RequestLogViewMixin, cls).as_view(*args, **kwargs)
+        view = decorator_from_middleware(RequestLogMiddleware)(view)
+        return view
+
+
 def date_now_or_future_validator(value):
-    try:
-        int(value)
-    except ValueError:
-        raise ValidationError('Incorrect format of date. It should be a unixtimestamp')
+    if not isinstance(value, (datetime.datetime, int)):
+        try:
+            int(value)
+        except ValueError:
+            raise ValidationError('Incorrect format of date. It should be a unixtimestamp')
 
     if value < datetime.datetime.now(tz=UTC()):
         raise ValidationError('Date and time shouldn\'t be less then the current')

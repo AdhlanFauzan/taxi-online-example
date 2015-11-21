@@ -59,5 +59,8 @@ target/
 # idea
 .idea/
 
-#virtualenv
+# virtualenv
 venv
+
+# settings.py
+taxi_online_example/settings.py
