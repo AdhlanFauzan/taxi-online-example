@@ -43,6 +43,19 @@ After DB preparation will be finished you need to create empty DB structure:
   source venv/bin/activate
   python manage.py syncdb
 
+To run the process of processing orders you need to execute the command:
+
+.. code-block:: bash
+
+  source venv/bin/activate
+  python manage.py process_orders
+
+So in production enviroment you should add in crontab the below string:
+
+.. code-block:: bash
+
+  * * * * * source venv/bin/activate; python manage.py process_orders --times_to_repeat=5
+
 How to run default Django web server
 ====================================
 
@@ -60,8 +73,19 @@ How to run unit tests
   source venv/bin/activate
   python manage.py test --keepdb -v 2
 
+Logging
+=======
+
+All logs you could find here:
+
+.. code-block:: bash
+
+  <project_path>/logs/django.api.requests.log
+  <project_path>/logs/django.requests.log
+  <project_path>/logs/processing.log
+
 REST API
-====================================
+========
 
 .. code-block:: bash
 
@@ -80,7 +104,8 @@ REST API
   # to create or update new order that the passenger with ID 456 will be picked up just now
   curl --data "lat=56.312719&lon=43.845431" "http://0.0.0.0:8000/passenger/456/order/" -v
 
-  # to create or update new order that the passenger with ID 456 will be picked up sometimes in future (unixtimestamp as a param)
+  # to create or update new order that the passenger with ID 456 will be picked up sometimes in future
+  # (unixtimestamp as a param)
   curl --data "lat=56.312719&lon=43.845431&time_to_pick_up=1448577995" "http://0.0.0.0:8000/passenger/456/order/" -v
 
   # to remove the order for the passenger with ID 456
