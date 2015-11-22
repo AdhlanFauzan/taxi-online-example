@@ -4,7 +4,7 @@ import time
 import random
 import requests
 
-server_name = 'ec2-52-18-8-159.eu-west-1.compute.amazonaws.com'
+server_name = 'example.com'
 timeout = 3
 
 while True:
