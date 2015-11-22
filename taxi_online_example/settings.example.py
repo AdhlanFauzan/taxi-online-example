@@ -31,7 +31,7 @@ SECRET_KEY = '5&$f-@u^v+v55slree5*uome!95g%t9d9(h4dp&te3*u5r&r6&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 DATETIME_FORMAT = "U"
 DATETIME_INPUT_FORMATS = ("%s",)
